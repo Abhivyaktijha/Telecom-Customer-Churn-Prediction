@@ -156,13 +156,10 @@ def main():
 
     if submitted:
         X_in = preprocess_input(user_input, bins, labels)
-
         pred_proba = model.predict_proba(X_in)[0][1]
         pred_class = model.predict(X_in)[0]
-
         st.markdown('---')
         st.subheader('Prediction Result')
-
         churn_label = 'Yes ⚠️' if pred_class == 1 else 'No ✅'
         m1, m2 = st.columns(2)
         m1.metric('Churn Prediction', churn_label)

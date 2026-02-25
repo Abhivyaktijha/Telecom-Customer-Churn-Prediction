@@ -17,7 +17,7 @@ import os
 # ─────────────────────────────────────────────
 
 @st.cache_data
-def load_and_clean_data(path=r'D:\project 2026\telecom Customer churn\Customer-Churn (1).csv'):
+def load_and_clean_data(path=r'Customer-Churn(1).csv'):
     churn = pd.read_csv(path)
     new_churn = churn.copy()
     new_churn['TotalCharges'] = pd.to_numeric(new_churn['TotalCharges'], errors='coerce')

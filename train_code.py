@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, make_scorer, f1_score
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.pipeline import Pipeline
@@ -31,7 +31,7 @@ X = new_churn.drop(columns='Churn')
 y = new_churn['Churn']
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.20, random_state=42
+    X, y, test_size=0.20, random_state=42, stratify=y
 )
 
 # ── Pipeline ──────────────────────────────────
@@ -45,7 +45,7 @@ preprocessor = ColumnTransformer(transformers=[
 
 full_pipeline = Pipeline([
     ('preprocessor', preprocessor),
-    ('Classifier', AdaBoostClassifier())
+    ('Classifier', AdaBoostClassifier(random_state=42))
 ])
 
 full_pipeline.fit(X_train, y_train)
@@ -56,15 +56,18 @@ print(classification_report(y_test, y_pred))
 # ── Hyperparameter tuning ─────────────────────
 param_distributions = {
     'Classifier__n_estimators': randint(50, 200),
-    'Classifier__learning_rate': uniform(0.01, 2.0),
+    'Classifier__learning_rate': uniform(0.01, 0.99),   # 0.01 to 1.0
 }
+
+# String labels ke liye positive class batana zaroori hai
+f1_scorer = make_scorer(f1_score, pos_label='Yes')
 
 random_search = RandomizedSearchCV(
     estimator=full_pipeline,
     param_distributions=param_distributions,
     n_iter=50,
     cv=5,
-    scoring='f1',
+    scoring=f1_scorer,
     verbose=2,
     random_state=42,
     n_jobs=-1

@@ -17,7 +17,7 @@ import os
 # ─────────────────────────────────────────────
 
 @st.cache_data
-def load_and_clean_data(path=r'Customer-Churn (1).csv'):
+def load_and_clean_data(path=r'D:\project 2026\telecom Customer churn\Customer-Churn (1).csv'):
     churn = pd.read_csv(path)
     new_churn = churn.copy()
     new_churn['TotalCharges'] = pd.to_numeric(new_churn['TotalCharges'], errors='coerce')
@@ -156,10 +156,13 @@ def main():
 
     if submitted:
         X_in = preprocess_input(user_input, bins, labels)
+
         pred_proba = model.predict_proba(X_in)[0][1]
         pred_class = model.predict(X_in)[0]
+
         st.markdown('---')
         st.subheader('Prediction Result')
+
         churn_label = 'Yes ⚠️' if pred_class == 1 else 'No ✅'
         m1, m2 = st.columns(2)
         m1.metric('Churn Prediction', churn_label)
@@ -185,4 +188,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+main()
